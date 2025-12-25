@@ -7,6 +7,7 @@ import Divider from '../components/utility/Divider'
 import FormButton from '../components/forms/Button'
 import Checkbox from '../components/forms/Checkbox'
 import UIButton from '../components/ui/Button'
+import Flex from '../components/layout/Flex'
 
 function LogInPage({ className, name, type, placeholder, label, required, value, error }) {
 
@@ -14,7 +15,20 @@ function LogInPage({ className, name, type, placeholder, label, required, value,
     <>
       <Grid classes='grid-cols-2 gap-4  overflow-hidden'>
         {/* First column */}
-        <div className="w-full p-12">
+        <Flex className="w-full p-12 flex-col">
+          <div class="flex items-center justify-between mb-16">
+            <div class="flex items-center space-x-2">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="font-semibold text-lg">Untitled UI</span>
+            </div>
+            <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Create an account</a>
+            </div>
+
+
           <div class="mb-8">
             <h1 class="text-3xl font-semibold text-gray-900 mb-2">Welcome back</h1>
             <p class="text-gray-600">Enter your Untitled account details.</p>
@@ -40,10 +54,12 @@ function LogInPage({ className, name, type, placeholder, label, required, value,
             </div>
             <FormButton text="Log In" />
           </Form>
-        </div>
+        </Flex>
 
         {/* Image Serving as second column */}
-        <Image src="adele-payman-2oYMwuFgnTg-unsplash.jpg" alt='Login background' imgClass='block w-full h-full object-cover' />
+        <div className='w-full h-full max-h-screen min-h-screen'>    
+          <Image src="hasan-almasi-Z4NJcyOAPvc-unsplash.jpg" alt='Login background' imgClass='block w-full h-full object-cover' />
+        </div>
         {/* <Image src="https://images.unsplash.com/photo-1569239591652-6cc3025b07fa?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt='Login background' imgClass='block w-full h-full object-cover' /> */}
       </Grid>
     </>
