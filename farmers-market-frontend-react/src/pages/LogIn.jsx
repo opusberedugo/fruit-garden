@@ -42,6 +42,12 @@ function LogInPage({ className, name, type, placeholder, label, required, value,
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
           </UIButton>
+          
+          <UIButton text="Log In with Facebook" onClick="" className="mb-4 w-full flex items-center justify-center space-x-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <svg  fill="currentColor" class="w-5 h-5 mx-4" viewBox="0 0 24 24">
+              <path d="M22 12.037C22 6.494 17.523 2 12 2S2 6.494 2 12.037c0 4.707 3.229 8.656 7.584 9.741v-6.674H7.522v-3.067h2.062v-1.322c0-3.416 1.54-5 4.882-5 .634 0 1.727.125 2.174.25v2.78a13 13 0 0 0-1.155-.037c-1.64 0-2.273.623-2.273 2.244v1.085h3.266l-.56 3.067h-2.706V22C18.164 21.4 22 17.168 22 12.037"/>
+            </svg>
+          </UIButton>
 
           <Divider  text="OR"/>
         
@@ -54,6 +60,10 @@ function LogInPage({ className, name, type, placeholder, label, required, value,
             </div>
             <FormButton text="Log In" />
           </Form>
+
+           <div class="mt-auto pt-8 text-center">
+              <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Trouble signing in?</a>
+            </div>
         </Flex>
 
         {/* Image Serving as second column */}
