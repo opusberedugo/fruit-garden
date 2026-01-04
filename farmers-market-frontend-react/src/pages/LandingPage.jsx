@@ -3,6 +3,9 @@ import Hero from '../components/layout/Hero'
 import NavBar from '../components/navigation/NavigationBar'
 import Flex from '../components/layout/Flex'
 import Image from '../components/utility/Image'
+import Grid from '../components/layout/Grid'
+import ProductTile from '../components/ecommerce/ProductTile'
+import Chip from '../components/ecommerce/Chip'
 
 export default function LandingPage(){
   return(
@@ -35,7 +38,7 @@ export default function LandingPage(){
                 <Flex className="items-center gap-5">
                   {/* User Link */}
                   <a href="#">
-                    <svg class="w-6 h-6 text-isagenix-gray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg className="w-6 h-6 text-isagenix-gray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                       <circle cx="12" cy="7" r="4"/>
                     </svg>
@@ -43,7 +46,7 @@ export default function LandingPage(){
                   
                   {/* User Link */}
                   <a href="#">
-                    <svg class="w-6 h-6 text-isagenix-gray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg className="w-6 h-6 text-isagenix-gray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <circle cx="9" cy="21" r="1"/>
                       <circle cx="20" cy="21" r="1"/>
                       <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -69,6 +72,14 @@ export default function LandingPage(){
         ctaPrimary={{text:"Demo Primary CTA"}}
         ctaSecondary={{text:"Demo Secondary CTA"}}
       />
+
+      <Grid classes='grid-cols-4 gap-4 px-12 mt-12'>
+        <ProductTile productName="Product Name" productImage="https://dummyimage.com/600x400/1a4d2e/fff" productPrice="100" productDescription="Product Description" productLink="https://google.com">
+          <Chip text="Fertilizer"  bgClass={"bg-lime-200"} textClass={"text-lime-900 font-medium"}/>
+          <Chip text="Organic"  bgClass={"bg-lime-200"} textClass={"text-lime-900 font-medium"}/>
+        </ProductTile>
+        
+      </Grid>
     </>
   )
 }
