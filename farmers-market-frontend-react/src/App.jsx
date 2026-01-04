@@ -4,13 +4,17 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import LogInPage from './pages/LogIn'
 import SingUpPage from './pages/SignUp'
+import LandingPage from './pages/LandingPage'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    // <LogInPage/>
-    <SingUpPage/>
+    <>
+    <LandingPage/>
+    {/* <LogInPage/> */}
+    {/* <SingUpPage/> */}
+    </>
     // <h1>Hello</h1>
   )
 }
