@@ -1,4 +1,6 @@
 import React from 'react'
+import { useState } from 'react'
+
 import Grid from '../components/layout/Grid'
 import Image from '../components/utility/Image'
 import Form from '../components/forms/Form'
@@ -10,16 +12,127 @@ import UIButton from '../components/ui/Button'
 import Flex from '../components/layout/Flex'
 import FormGroup from '../components/forms/FormGroup'
 
+
 export default function SingUpPage({ }) {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    birthDay: '',
+    birthMonth: '',
+    birthYear: '',
+  })
+
+  const [errors, setErrors] = useState({})
+
+  function handleChange(e) {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+    // Clear error for the modified field
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' })
+    }
+  }
+
+  function validateForm() {
+    const newErrors = {}
+
+    // First Name Validation
+    if (!formData.firstName) {
+      newErrors.firstName = 'First name is required'
+    } else if (formData.firstName.length < 3) {
+      newErrors.firstName = 'First name must be at least 3 characters'
+    } else if (/\s/.test(formData.firstName)) {
+      newErrors.firstName = 'First name cannot contain spaces'
+    } else if (/[^a-zA-Z]/.test(formData.firstName)) {
+      newErrors.firstName = 'First name cannot contain special characters or numbers'
+    }
+
+    // Last Name Validation
+    if (!formData.lastName) {
+      newErrors.lastName = 'Last name is required'
+    } else if (formData.lastName.length < 3) {
+      newErrors.lastName = 'Last name must be at least 3 characters'
+    } else if (/\s/.test(formData.lastName)) {
+      newErrors.lastName = 'Last name cannot contain spaces'
+    } else if (/[^a-zA-Z]/.test(formData.lastName)) {
+      newErrors.lastName = 'Last name cannot contain special characters or numbers'
+    }
+    if (!formData.email) {
+      newErrors.email = 'Email is required'
+    } else if (!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(formData.email)) {
+      newErrors.email = 'Email is invalid'
+    }
+
+    if (!formData.phone) newErrors.phone = 'Phone number is required'
+
+    if (!formData.password) newErrors.password = 'Password is required'
+    if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters'
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Confirm Password is required'
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match'
+    }
+
+    if (!formData.birthDay) newErrors.birthDay = 'Day is required'
+    if (!formData.birthMonth) newErrors.birthMonth = 'Month is required'
+    if (!formData.birthYear) newErrors.birthYear = 'Year is required'
+
+    // Basic date validity
+    if (formData.birthDay && (formData.birthDay < 1 || formData.birthDay > 31)) newErrors.birthDay = 'Invalid day'
+    if (formData.birthMonth && (formData.birthMonth < 1 || formData.birthMonth > 12)) newErrors.birthMonth = 'Invalid month'
+
+    // Age validation (18+)
+    if (formData.birthDay && formData.birthMonth && formData.birthYear) {
+      const birthDate = new Date(formData.birthYear, formData.birthMonth - 1, formData.birthDay);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - (birthDate.getMonth());
+
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      if (age < 18) {
+        newErrors.birthYear = 'You must be at least 18 years old';
+      }
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (validateForm()) {
+      console.log('Form Submitted', formData)
+      const response = await fetch("http://localhost:3000/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+      console.log(response)
+      // Proceed with submission logic usually here
+    } else {
+      console.log('Validation Failed')
+    }
+  }
+
   return (
     <>
       <Grid classes='grid-cols-2 gap-4  overflow-hidden'>
         {/* First column */}
         <Flex className="w-full p-12 flex-col">
           <Flex className="flex items-center justify-between mb-16">
-            <div class="flex items-center space-x-2">
+            <Flex className="flex items-center space-x-2">
               <Image imgClass="w-40" src="logo.png" />
-            </div>
+            </Flex>
             <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Already have an account</a>
           </Flex>
 
@@ -48,31 +161,120 @@ export default function SingUpPage({ }) {
 
           <Divider text="OR" />
 
-          <Form>
+          <Form onSubmit={handleSubmit}>
 
-            <FormGroup className="mb-4 grid-cols-2 gap-4" error="">
-              <FormField className="mb-4" name="email" type="email" placeholder="Enter your email" label="First name" required value="" error="" onChange="" />
-              <FormField className="mb-4" name="password" type="password" placeholder="Enter your password" label="Last name" required value="" error="" onChange="" />
+            <FormGroup className="grid-cols-2 gap-4">
+              <FormField
+                className="mb-4"
+                name="firstName"
+                type="text"
+                placeholder="Enter your first name"
+                label="First name"
+                required
+                value={formData.firstName}
+                error={errors.firstName}
+                onChange={handleChange}
+              />
+              <FormField
+                className="mb-4"
+                name="lastName"
+                type="text"
+                placeholder="Enter your last name"
+                label="Last name"
+                required
+                value={formData.lastName}
+                error={errors.lastName}
+                onChange={handleChange}
+              />
             </FormGroup>
 
-            <label htmlFor={name} className='block text-gray-700 font-medium mb-2'>Age <span className='text-red-500'>*</span></label>
-            <FormGroup className="mb-4 grid-cols-3 gap-4">
-              <FormField className="mb-4" name="age" type="number" placeholder="Day" label="" value="" error="" onChange="" />
-              <FormField className="mb-4" name="age" type="number" placeholder="Month" label="" value="" error="" onChange="" />
-              <FormField className="mb-4" name="age" type="number" placeholder="Year" label="" value="" error="" onChange="" />
+            <label className='block text-gray-700 font-medium mb-2'>Date of birth <span className='text-red-500'>*</span></label>
+            <FormGroup className="grid-cols-3 gap-4" error={""} >
+              <FormField
+                className="mb-4"
+                name="birthDay"
+                type="number"
+                placeholder="Day"
+                label=""
+                value={formData.birthDay}
+                error={errors.birthDay}
+                onChange={handleChange}
+              />
+              <FormField
+                className="mb-4"
+                name="birthMonth"
+                type="number"
+                placeholder="Month"
+                label=""
+                value={formData.birthMonth}
+                error={errors.birthMonth}
+                onChange={handleChange}
+              />
+              <FormField
+                className="mb-4"
+                name="birthYear"
+                type="number"
+                placeholder="Year"
+                label=""
+                value={formData.birthYear}
+                error={errors.birthYear}
+                onChange={handleChange}
+              />
             </FormGroup>
 
-            <FormField className="mb-4" name="email" type="email" placeholder="Enter your email" label="Email" required value="" error="" onChange="" />
+            <FormField
+              className="mb-4"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+              label="Email"
+              required
+              value={formData.email}
+              error={errors.email}
+              onChange={handleChange}
+            />
 
-            <FormField className="mb-4" name="phone" type="tel" placeholder="Enter your phone number" label="Phone number" required value="" error="" onChange="" />
+            <FormField
+              className="mb-4"
+              name="phone"
+              type="tel"
+              placeholder="Enter your phone number"
+              label="Phone number"
+              required
+              value={formData.phone}
+              error={errors.phone}
+              onChange={handleChange}
+            />
 
-            <FormField className="mb-4" name="password" type="password" placeholder="Enter your password" label="Password" required value="" error="" onChange="" />
+            <FormField
+              className="mb-4"
+              name="password"
+              type="password"
+              placeholder="Enter your password"
+              label="Password"
+              required
+              value={formData.password}
+              error={errors.password}
+              onChange={handleChange}
+            />
+
+            <FormField
+              className="mb-4"
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirm your password"
+              label="Confirm Password"
+              required
+              value={formData.confirmPassword}
+              error={errors.confirmPassword}
+              onChange={handleChange}
+            />
 
             <FormButton text="Sign Up" className="bg-forest-500 hover:bg-forest-600 transition-colors" />
           </Form>
 
           <div class="mt-auto pt-8 text-center">
-            <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Trouble signing in?</a>
+            <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Trouble signing Up?</a>
           </div>
         </Flex>
 
