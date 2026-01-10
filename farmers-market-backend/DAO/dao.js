@@ -12,6 +12,11 @@ class MongoDBDAO {
     const result = await collection.insertOne(user);
     return result;
   }
+
+  async getUserByEmail(email) {
+    const collection = this.db.collection("users");
+    return await collection.findOne({ email });
+  }
 }
 
 module.exports = { MongoDBDAO };
