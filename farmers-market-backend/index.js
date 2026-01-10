@@ -5,11 +5,25 @@ const jwt = require('jsonwebtoken');
 const app = express();
 require('dotenv').config();
 
-app.use(express.json());
+// app.use(cors({
+//   origin: '*',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
+
 app.use(cors());
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const { MongoDBDAO } = require("./DAO/dao")
 const { User } = require('./DAO/DataClasses/User');
 let mongodbdao = new MongoDBDAO();
+
+app.use(function(req,res,next){
+  console.log(`A request ${req.method} from ${req.url} at ${Date().toLocaleString()} from ${req.ip}`)
+  next()
+})
 
 
 
