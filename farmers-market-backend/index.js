@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const app = express();
 require('dotenv').config();
 
@@ -49,13 +48,7 @@ app.post("/signup", async (req, res) => {
     const newUser = new User(firstName, lastName, dob, phone, hashedPassword, email);
     await mongodbdao.createNewUser(newUser);
 
-    const token = jwt.sign(
-      { email: newUser.email, id: newUser._id },
-      process.env.JWT_SECRET || 'your_jwt_secret',
-      { expiresIn: '1h' }
-    );
-
-    res.status(201).json({ result: newUser, token });
+    res.status(201).json({ result: newUser });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Something went wrong" });
