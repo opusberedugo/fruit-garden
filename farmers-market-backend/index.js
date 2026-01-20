@@ -28,6 +28,9 @@ app.listen(process.env.PORT || 3000, ()=>{
 app.post("/signup", (req, res)=>{
   let dob = new Date(`${req.body.birthYear}-${req.body.birthMonth}-${req.body.birthDay}`);
   let user = new User(req.body.firstName, req.body.lastName, dob, req.body.phone, req.body.password, req.body.email);
-  mongodbdao.createNewUser(user);
-  res.send("SignUpSeen").statusCode(200)
+  mongodbdao.createNewUser(user).then(
+    res.send("SignUp Completed").statusCode(200)
+  ).catch(
+    res.send("SignUp Failed").statusCode(500)
+  );
 })
