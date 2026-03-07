@@ -1,4 +1,6 @@
 class User {
+  id;
+
   constructor(firstName, lastName, dateOfBirth, phoneNumber, password, email,) {
     this.password = password;
     this.email = email;
@@ -13,3 +15,4 @@ class User {
 }
 
 module.exports = { User };
+
