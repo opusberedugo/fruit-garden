@@ -1,5 +1,4 @@
 class User {
-  id;
 
   constructor(firstName, lastName, dateOfBirth, phoneNumber, password, email,) {
     this.password = password;
@@ -9,9 +8,6 @@ class User {
     this.phoneNumber = phoneNumber;
     this.dateOfBirth = dateOfBirth;
   }
-
-
-
 }
 
 module.exports = { User };
