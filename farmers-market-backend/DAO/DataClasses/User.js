@@ -1,5 +1,8 @@
 class User {
 
+  phoneVerificationStatus = "unverified"
+  emailVerificationStatus = "unverified"
+
   constructor(firstName, lastName, dateOfBirth, phoneNumber, password, email,) {
     this.password = password;
     this.email = email;

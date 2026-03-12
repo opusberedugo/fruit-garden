@@ -17,6 +17,7 @@ class MongoDBDAO {
 
   async createNewUser(user) {
     const collection = this.db.collection("users");
+    collection.createIndex({ email: 1 }, { unique: true });
     const result = await collection.insertOne(user);
     return result;
   }

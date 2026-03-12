@@ -1,15 +1,18 @@
 const express = require('express')
 const cors = require("cors")
-require("dotenv").config()
-const app = express()
 
-app.use((req,res,next)=>{
+const crypto  = require("crypto")
+
+const app = express()
+require("dotenv").config()
+
+app.use((req, res, next) => {
   console.log(`A ${req.method} from ${req.url} with IP ${req.ip}`);
   next()
 })
 
 app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }))
 
 app.use(cors({
   origin: process.env.FRONTEND_URL,
@@ -18,17 +21,16 @@ app.use(cors({
 
 app.use(express.static("public"))
 
-
 const { MongoDBDAO } = require("./DAO/dao")
 const { User } = require('./DAO/DataClasses/User');
 let mongodbdao = new MongoDBDAO();
 
 
-app.listen(process.env.PORT || 3000, ()=>{
+app.listen(process.env.PORT || 3000, () => {
   console.log(`Server is running on port ${process.env.PORT || 3000}`);
 })
 
-app.post("/signup", (req, res)=>{
+app.post("/signup", async (req, res) => {
 
   console.log(req.body);
 
@@ -38,30 +40,53 @@ app.post("/signup", (req, res)=>{
   const minAgeDate = new Date();
   minAgeDate.setFullYear(minAgeDate.getFullYear() - 18);
 
+  if (req.body.firstName.trim().length < 3 || req.body.lastName.trim().length < 3) {
+    return res.status(422).json({ message: "First name / Last name must not be less than 3 characters." });
+  }
+
+  if (!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(req.body.email)) {
+    return res.status(422).json({ message: "Invalid email address." });
+  }
+
   if (dob > minAgeDate) {
     // 422: Unprocessable Content — user is too young
     return res.status(422).json({ message: "You must be at least 18 years old to sign up." });
   }
 
-  if (!req.body.firstName || req.body.firstName.length <= 3) {
-    return res.status(422).json({ message: "First name must be more than 3 characters." });
+  if (!/^(\+?230[\s-]?)?[2456789]\d{3}[\s-]?\d{4}$/.test(req.body.phone.trim())) {
+    return res.status(422).json({ message: "Invalid phone number. Valid phone number format" });
   }
 
-  if (!req.body.lastName || req.body.lastName.length <= 3) {
-    return res.status(422).json({ message: "Last name must be more than 3 characters." });
+  if (req.body.password.length < 6) {
+    return res.status(422).json({ message: "Password must be at least 6 characters." });
   }
 
-  let user = new User(req.body.firstName, req.body.lastName, dob, req.body.phone, req.body.password, req.body.email);
-  mongodbdao.createNewUser(user)
-    .then(() => {
-      res.status(200).json({ message: "SignUp Completed" });
-    })
-    .catch((err) => {
-      console.error("DB error:", err);
-      res.status(500).json({ message: "SignUp Failed" });
-    });
+  if (req.body.password !== req.body.confirmPassword) {
+    return res.status(422).json({ message: "Passwords do not match." });
+  }
+
+  try {
+    let user = new User(req.body.firstName, req.body.lastName, dob, req.body.phone, crypto.Cipheriv(req.body.password), req.body.email);
+    let result = await mongodbdao.createNewUser(user)
+    console.error("New Creation Result",result)
+
+    if(result){
+      res.status(200).json({ id: result.insertedId.toString() });
+    }
+  
+  } catch (error) {
+    if(error.code === 11000)
+      return res.status(409).json({ message: "Email already exists." });
+  }
+
+  if (result) {
+    res.status(200).json({ message: "SignUp Completed" });
+  }
+  else {
+    res.status(500).json({ message: "SignUp Failed" });
+  }
 })
 
-app.get("/test", function(req, res){
+app.get("/test", function (req, res) {
   res.send("Test Done server working").statusCode("200")
 })
