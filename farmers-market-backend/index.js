@@ -1,7 +1,8 @@
 const express = require('express')
 const cors = require("cors")
 
-const crypto  = require("crypto")
+const { TextCypher } = require("./Encoder/TextCypher");
+let textCypher = new TextCypher('aes-256-cbc', 32, 16);
 
 const app = express()
 require("dotenv").config()
@@ -66,12 +67,12 @@ app.post("/signup", async (req, res) => {
   }
 
   try {
-    let user = new User(req.body.firstName, req.body.lastName, dob, req.body.phone, crypto.Cipheriv(req.body.password), req.body.email);
+    let user = new User(req.body.firstName, req.body.lastName, dob, req.body.phone, textCypher.encrypt(req.body.password), req.body.email);
     let result = await mongodbdao.createNewUser(user)
     console.error("New Creation Result",result)
 
     if(result){
-      res.status(200).json({ id: result.insertedId.toString() });
+      res.status(200).json({ id: textCypher.encrypt(result.insertedId.toString()) });
     }
   
   } catch (error) {

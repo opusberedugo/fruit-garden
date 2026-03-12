@@ -34,7 +34,7 @@ class TextCypher {
 
 let testCypher = new TextCypher('aes-256-cbc', 32, 16);
 
-let encryptedText = testCypher.encrypt('Hello World');
+let encryptedText = testCypher.encrypt('69b3318ae34dd5f469c28824');
 console.log('Encrypted Text:', encryptedText);
 
 let decryptedText = testCypher.decrypt(encryptedText);
