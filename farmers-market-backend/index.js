@@ -4,6 +4,9 @@ const cors = require("cors")
 const { TextCypher } = require("./Encoder/TextCypher");
 let textCypher = new TextCypher('aes-256-cbc', 32, 16);
 
+const { Mailer } = require("./Mailer/Mailer");
+let mailer = new Mailer();
+
 const app = express()
 require("dotenv").config()
 
@@ -85,6 +88,32 @@ app.post("/signup", async (req, res) => {
   }
   else {
     res.status(500).json({ message: "SignUp Failed" });
+  }
+})
+
+app.get("/send-verification-email/:id", async function (req, res) {
+  let code = textCypher.generateRandomEmailCode();
+  await mongodbdao.dumpEmailCode(code, textCypher.decrypt(req.params.id));
+  let userEmail = await mongodbdao.getEmailfromID(textCypher.decrypt(req.params.id));
+  mailer.sendVerficationEmail(code, userEmail);
+  res.send("Verification Email Sent").statusCode("200")
+})
+
+app.post("/verify-email/:id", async function (req, res) {
+  let code = req.body.code;
+  let id = textCypher.decrypt(req.params.id);
+  let result = await mongodbdao.getEmailCode(id);
+  if(result){
+    if(result.code === code){
+      await mongodbdao.deleteEmailCode(id);
+      res.send("Email Verified").statusCode("200")
+    }
+    else{
+      res.send("Invalid Code").statusCode("401")
+    }
+  }
+  else{
+    res.send("Email Not Found").statusCode("404")
   }
 })
 

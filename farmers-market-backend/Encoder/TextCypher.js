@@ -30,6 +30,10 @@ class TextCypher {
       decrypted += decipher.final('utf8');
       return decrypted;
     }
+
+    generateRandomEmailCode(){
+      return crypto.randomInt(10000000, 99999999);
+    }
 }
 
 let testCypher = new TextCypher('aes-256-cbc', 32, 16);
